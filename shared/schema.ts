@@ -1,20 +1,16 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+
 import { z } from "zod";
 
-export const reviews = pgTable("reviews", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  rating: integer("rating").notNull(),
-  review: text("review").notNull(),
-  date: timestamp("date").notNull().defaultNow(),
+export const insertReviewSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  rating: z.number().min(1).max(5),
+  review: z.string().min(1, "Review is required"),
 });
 
-export const insertReviewSchema = createInsertSchema(reviews).omit({
-  id: true,
-  date: true,
+export const reviewSchema = insertReviewSchema.extend({
+  _id: z.string(),
+  date: z.date(),
 });
 
 export type InsertReview = z.infer<typeof insertReviewSchema>;
-export type Review = typeof reviews.$inferSelect;
+export type Review = z.infer<typeof reviewSchema>;

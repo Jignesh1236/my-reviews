@@ -1,47 +1,64 @@
-import { type Review, type InsertReview } from "@shared/schema";
-import { randomUUID } from "crypto";
-import { drizzle } from "drizzle-orm/neon-serverless";
-import ws from "ws";
-import * as schema from "@shared/schema";
+
+import { type Review, type InsertReview, reviewSchema } from "@shared/schema";
+import { MongoClient, Db, Collection, ObjectId } from "mongodb";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
 }
 
-export const db = drizzle({
-  connection: process.env.DATABASE_URL,
-  schema,
-  ws: ws,
-});
+let db: Db;
+let reviewsCollection: Collection;
+
+async function initializeDb() {
+  const client = new MongoClient(process.env.DATABASE_URL!);
+  await client.connect();
+  db = client.db();
+  reviewsCollection = db.collection("reviews");
+  
+  // Create index for sorting by date
+  await reviewsCollection.createIndex({ date: -1 });
+}
+
+// Initialize database connection
+initializeDb().catch(console.error);
 
 export interface IStorage {
   getReviews(): Promise<Review[]>;
   createReview(review: InsertReview): Promise<Review>;
 }
 
-export class MemStorage implements IStorage {
-  private reviews: Map<string, Review>;
-
-  constructor() {
-    this.reviews = new Map();
-  }
-
+export class MongoStorage implements IStorage {
   async getReviews(): Promise<Review[]> {
-    return Array.from(this.reviews.values()).sort(
-      (a, b) => b.date.getTime() - a.date.getTime()
-    );
+    const docs = await reviewsCollection
+      .find()
+      .sort({ date: -1 })
+      .toArray();
+    
+    return docs.map(doc => ({
+      _id: doc._id.toString(),
+      name: doc.name,
+      rating: doc.rating,
+      review: doc.review,
+      date: doc.date,
+    }));
   }
 
   async createReview(insertReview: InsertReview): Promise<Review> {
-    const id = randomUUID();
-    const review: Review = {
+    const result = await reviewsCollection.insertOne({
       ...insertReview,
-      id,
       date: new Date(),
+    });
+    
+    const newDoc = await reviewsCollection.findOne({ _id: result.insertedId });
+    
+    return {
+      _id: newDoc!._id.toString(),
+      name: newDoc!.name,
+      rating: newDoc!.rating,
+      review: newDoc!.review,
+      date: newDoc!.date,
     };
-    this.reviews.set(id, review);
-    return review;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new MongoStorage();
