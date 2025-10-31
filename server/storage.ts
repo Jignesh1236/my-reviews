@@ -2,15 +2,13 @@
 import { type Review, type InsertReview, reviewSchema } from "@shared/schema";
 import { MongoClient, Db, Collection, ObjectId } from "mongodb";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
-}
+const DATABASE_URL = "mongodb+srv://jigneshmaru690_db_user:Jignesh%40Maru@jignesh.sqbuwxq.mongodb.net/?appName=jignesh";
 
 let db: Db;
 let reviewsCollection: Collection;
 
 async function initializeDb() {
-  const client = new MongoClient(process.env.DATABASE_URL!);
+  const client = new MongoClient(DATABASE_URL);
   await client.connect();
   db = client.db();
   reviewsCollection = db.collection("reviews");
