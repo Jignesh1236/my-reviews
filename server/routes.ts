@@ -33,7 +33,9 @@ export function registerRoutes(app: Express): Server {
     try {
       const svg = await generateReviewWidget();
       res.setHeader("Content-Type", "image/svg+xml");
-      res.setHeader("Cache-Control", "public, max-age=300"); // Cache for 5 minutes
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
       res.send(svg);
     } catch (error) {
       console.error("Error generating widget:", error);
