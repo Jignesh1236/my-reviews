@@ -15,11 +15,11 @@ export async function generateReviewWidget(): Promise<string> {
   const latestReviews = allReviews.slice(0, 3);
 
   // Generate SVG
-  const width = 100;
+  const width = "100%";
   const height = 220 + (latestReviews.length * 80);
 
   let svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+<svg width="${width}" height="${height}" viewBox="0 0 450 ${height}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
   <defs>
     <style>
       .bg { fill: #0d1117; }
@@ -42,8 +42,8 @@ export async function generateReviewWidget(): Promise<string> {
   </defs>
 
   <!-- Background with gradient -->
-  <rect fill="url(#grad1)" width="${width}" height="${height}" rx="8"/>
-  <rect class="border" width="${width}" height="${height}" rx="8"/>
+  <rect fill="url(#grad1)" width="450" height="${height}" rx="8"/>
+  <rect class="border" width="450" height="${height}" rx="8"/>
 
   <!-- Header Section -->
   <text class="title" x="20" y="35">⭐ Reviews</text>
@@ -61,7 +61,7 @@ export async function generateReviewWidget(): Promise<string> {
   ${generateStars(Math.round(avgRating), 240, 105, 14)}
 
   <!-- Divider -->
-  <line class="divider" x1="20" y1="140" x2="${width - 20}" y2="140"/>
+  <line class="divider" x1="20" y1="140" x2="430" y2="140"/>
 
   <!-- Recent Reviews Section -->
   <text class="section-title" x="20" y="170">📝 Latest Reviews</text>
@@ -80,8 +80,8 @@ export async function generateReviewWidget(): Promise<string> {
 
       svg += `
   <!-- Review ${index + 1} Card -->
-  <rect class="card-bg" x="20" y="${yPos - 10}" width="${width - 40}" height="70" rx="6"/>
-  <rect class="border" x="20" y="${yPos - 10}" width="${width - 40}" height="70" rx="6"/>
+  <rect class="card-bg" x="20" y="${yPos - 10}" width="410" height="70" rx="6"/>
+  <rect class="border" x="20" y="${yPos - 10}" width="410" height="70" rx="6"/>
   <text class="review-name" x="30" y="${yPos + 10}">${escapeXml(review.name)}</text>
   ${generateStars(review.rating, 30, yPos + 18, 12)}
   <text class="review-text" x="30" y="${yPos + 45}">${escapeXml(reviewText)}</text>
