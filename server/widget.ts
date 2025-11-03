@@ -1,26 +1,18 @@
 
-import { db } from '../db';
-import { reviews } from '@db/schema';
-import { sql } from 'drizzle-orm';
+import { storage } from './storage';
 
 export async function generateReviewWidget(): Promise<string> {
-  // Get review statistics
-  const stats = await db
-    .select({
-      total: sql<number>`count(*)`,
-      avgRating: sql<number>`avg(${reviews.rating})`,
-    })
-    .from(reviews);
+  // Get all reviews
+  const allReviews = await storage.getReviews();
+  
+  // Calculate statistics
+  const totalReviews = allReviews.length;
+  const avgRating = totalReviews > 0 
+    ? allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews 
+    : 0;
 
-  const totalReviews = stats[0]?.total || 0;
-  const avgRating = stats[0]?.avgRating || 0;
-
-  // Get latest reviews
-  const latestReviews = await db
-    .select()
-    .from(reviews)
-    .orderBy(sql`${reviews.createdAt} desc`)
-    .limit(3);
+  // Get latest 3 reviews
+  const latestReviews = allReviews.slice(0, 3);
 
   // Generate SVG
   const width = 400;
