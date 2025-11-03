@@ -4,7 +4,7 @@ import { storage } from './storage';
 export async function generateReviewWidget(): Promise<string> {
   // Get all reviews
   const allReviews = await storage.getReviews();
-  
+
   // Calculate statistics
   const totalReviews = allReviews.length;
   const avgRating = totalReviews > 0 
@@ -15,7 +15,7 @@ export async function generateReviewWidget(): Promise<string> {
   const latestReviews = allReviews.slice(0, 3);
 
   // Generate SVG
-  const width = 450;
+  const width = 100;
   const height = 220 + (latestReviews.length * 80);
 
   let svg = `<?xml version="1.0" encoding="UTF-8"?>
@@ -40,29 +40,29 @@ export async function generateReviewWidget(): Promise<string> {
       <stop offset="100%" style="stop-color:#161b22;stop-opacity:1" />
     </linearGradient>
   </defs>
-  
+
   <!-- Background with gradient -->
   <rect fill="url(#grad1)" width="${width}" height="${height}" rx="8"/>
   <rect class="border" width="${width}" height="${height}" rx="8"/>
-  
+
   <!-- Header Section -->
   <text class="title" x="20" y="35">⭐ Reviews</text>
-  
+
   <!-- Stats Cards -->
   <rect class="card-bg" x="20" y="50" width="200" height="70" rx="6"/>
   <rect class="border" x="20" y="50" width="200" height="70" rx="6"/>
   <text class="stat-label" x="30" y="75">Total Reviews</text>
   <text class="stat-value" x="30" y="100">${totalReviews}</text>
-  
+
   <rect class="card-bg" x="230" y="50" width="200" height="70" rx="6"/>
   <rect class="border" x="230" y="50" width="200" height="70" rx="6"/>
   <text class="stat-label" x="240" y="75">Average Rating</text>
   <text class="stat-value" x="240" y="100">${avgRating.toFixed(1)} / 5.0</text>
   ${generateStars(Math.round(avgRating), 240, 105, 14)}
-  
+
   <!-- Divider -->
   <line class="divider" x1="20" y1="140" x2="${width - 20}" y2="140"/>
-  
+
   <!-- Recent Reviews Section -->
   <text class="section-title" x="20" y="170">📝 Latest Reviews</text>
 `;
@@ -77,7 +77,7 @@ export async function generateReviewWidget(): Promise<string> {
       const reviewText = review.review.length > 60 
         ? review.review.substring(0, 60) + '...' 
         : review.review;
-      
+
       svg += `
   <!-- Review ${index + 1} Card -->
   <rect class="card-bg" x="20" y="${yPos - 10}" width="${width - 40}" height="70" rx="6"/>
