@@ -46,7 +46,7 @@ export async function generateReviewWidget(): Promise<string> {
   <rect class="border" width="${width}" height="${height}" rx="8"/>
   
   <!-- Header Section -->
-  <text class="title" x="20" y="35">⭐ Reviews Dashboard</text>
+  <text class="title" x="20" y="35">⭐ Reviews</text>
   
   <!-- Stats Cards -->
   <rect class="card-bg" x="20" y="50" width="200" height="70" rx="6"/>
