@@ -1,8 +1,8 @@
-
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertReviewSchema } from "@shared/schema";
+import { generateReviewWidget } from "./widget";
 
 export function registerRoutes(app: Express): Server {
   // Get all reviews
@@ -25,6 +25,19 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error creating review:", error);
       res.status(400).json({ message: "Invalid review data" });
+    }
+  });
+
+  // Add widget endpoint
+  app.get("/api/widget", async (req, res) => {
+    try {
+      const svg = await generateReviewWidget();
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.setHeader("Cache-Control", "public, max-age=300"); // Cache for 5 minutes
+      res.send(svg);
+    } catch (error) {
+      console.error("Error generating widget:", error);
+      res.status(500).json({ message: "Failed to generate widget" });
     }
   });
 
