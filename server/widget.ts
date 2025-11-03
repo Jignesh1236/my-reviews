@@ -100,7 +100,7 @@ function generateStars(rating: number, x: number, y: number, size: number = 16):
   let stars = '';
   for (let i = 0; i < 5; i++) {
     const starX = x + (i * (size + 2));
-    stars += `<text class="${i < rating ? 'star' : 'star-empty'}" x="${starX}" y="${y}" font-size="${size}">★</text>`;
+    stars += `<text class="${i < rating ? 'star' : 'star-empty'}" x="${starX}" y="${y + size * 0.35}" font-size="${size}" dominant-baseline="middle">★</text>`;
   }
   return stars;
 }
