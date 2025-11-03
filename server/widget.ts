@@ -12,11 +12,11 @@ export async function generateReviewWidget(): Promise<string> {
     : 0;
 
   // Get latest 3 reviews
-  const latestReviews = allReviews.slice(0, 5);
+  const latestReviews = allReviews.slice(0, 3);
 
   // Generate SVG
   const width = "100%";
-  const height = 350 + (latestReviews.length * 90);
+  const height = 220 + (latestReviews.length * 70);
 
   let svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${width}" height="${height}" viewBox="0 0 450 ${height}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
@@ -80,13 +80,13 @@ export async function generateReviewWidget(): Promise<string> {
 
       svg += `
   <!-- Review ${index + 1} Card -->
-  <rect class="card-bg" x="20" y="${yPos - 10}" width="410" height="80" rx="6"/>
-  <rect class="border" x="20" y="${yPos - 10}" width="410" height="80" rx="6"/>
+  <rect class="card-bg" x="20" y="${yPos - 10}" width="410" height="65" rx="6"/>
+  <rect class="border" x="20" y="${yPos - 10}" width="410" height="65" rx="6"/>
   <text class="review-name" x="30" y="${yPos + 10}">${escapeXml(review.name)}</text>
   ${generateStars(review.rating, 30, yPos + 18, 12)}
-  <text class="review-text" x="30" y="${yPos + 45}">${escapeXml(reviewText)}</text>
+  <text class="review-text" x="30" y="${yPos + 40}">${escapeXml(reviewText)}</text>
 `;
-      yPos += 90;
+      yPos += 70;
     });
   }
 
