@@ -7,9 +7,12 @@ import { useToast } from "@/hooks/use-toast";
 import Overview from "@/pages/Overview";
 import Reviews from "@/pages/Reviews";
 import NotFound from "@/pages/not-found";
+import { REPOS } from "@/components/ReviewForm";
+
+const VALID_REPOS = REPOS.map(r => r.name);
 
 function Router() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { toast } = useToast();
   
   const { data: reviews = [], refetch } = useQuery({
@@ -39,14 +42,54 @@ function Router() {
     setLocation(tab === 'overview' ? '/' : '/reviews');
   };
 
-  const handleSubmitReview = (data: { name: string; rating: number; review: string }) => {
+  const handleSubmitReview = (data: { name: string; appName: string; rating: number; review: string }) => {
     mutation.mutate(data);
+  };
+
+  const handleRepoChange = (repo: string) => {
+    if (VALID_REPOS.includes(repo)) {
+      setLocation(`/repo/${repo}`);
+    }
+  };
+
+  const getSelectedRepo = () => {
+    if (location.startsWith('/repo/')) {
+      const repo = location.replace('/repo/', '');
+      if (VALID_REPOS.includes(repo)) {
+        return repo;
+      }
+    }
+    return undefined;
+  };
+
+  const isValidRepoRoute = (repoName: string) => {
+    return VALID_REPOS.includes(repoName);
   };
 
   return (
     <Switch>
       <Route path="/">
-        <Overview onNavigate={handleNavigate} onSubmitReview={handleSubmitReview} />
+        <Overview 
+          onNavigate={handleNavigate} 
+          onSubmitReview={handleSubmitReview}
+          selectedRepo={getSelectedRepo()}
+          onRepoChange={handleRepoChange}
+        />
+      </Route>
+      <Route path="/repo/:repoName">
+        {(params) => {
+          if (!isValidRepoRoute(params.repoName)) {
+            return <NotFound />;
+          }
+          return (
+            <Overview 
+              onNavigate={handleNavigate} 
+              onSubmitReview={handleSubmitReview}
+              selectedRepo={params.repoName}
+              onRepoChange={handleRepoChange}
+            />
+          );
+        }}
       </Route>
       <Route path="/reviews">
         <Reviews reviews={reviews} onNavigate={handleNavigate} />

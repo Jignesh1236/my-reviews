@@ -3,8 +3,9 @@ import Navigation from '@/components/Navigation';
 import ReviewCard from '@/components/ReviewCard';
 
 interface Review {
-  id: string;
+  _id: string;
   name: string;
+  appName: string;
   rating: number;
   review: string;
   date: Date | string;
@@ -38,8 +39,9 @@ export default function Reviews({ reviews, onNavigate }: ReviewsProps) {
             <div className="space-y-4" data-testid="list-reviews">
               {reviews.map((review) => (
                 <ReviewCard
-                  key={review.id}
+                  key={review._id}
                   name={review.name}
+                  appName={review.appName}
                   rating={review.rating}
                   review={review.review}
                   date={typeof review.date === 'string' ? new Date(review.date) : review.date}

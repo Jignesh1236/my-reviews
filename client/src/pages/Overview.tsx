@@ -4,10 +4,12 @@ import ReviewForm from '@/components/ReviewForm';
 
 interface OverviewProps {
   onNavigate: (tab: 'overview' | 'reviews') => void;
-  onSubmitReview: (data: { name: string; rating: number; review: string }) => void;
+  onSubmitReview: (data: { name: string; appName: string; rating: number; review: string }) => void;
+  selectedRepo?: string;
+  onRepoChange?: (repo: string) => void;
 }
 
-export default function Overview({ onNavigate, onSubmitReview }: OverviewProps) {
+export default function Overview({ onNavigate, onSubmitReview, selectedRepo, onRepoChange }: OverviewProps) {
   return (
     <div className="min-h-screen bg-background p-5">
       <div className="max-w-[900px] mx-auto bg-card border border-card-border rounded-md p-8">
@@ -20,7 +22,11 @@ export default function Overview({ onNavigate, onSubmitReview }: OverviewProps) 
           <Navigation activeTab="overview" onTabChange={onNavigate} />
         </div>
         <div className="mt-8">
-          <ReviewForm onSubmit={onSubmitReview} />
+          <ReviewForm 
+            onSubmit={onSubmitReview} 
+            selectedRepo={selectedRepo}
+            onRepoChange={onRepoChange}
+          />
         </div>
       </div>
     </div>

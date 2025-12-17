@@ -1,6 +1,6 @@
 
-import { type Review, type InsertReview, reviewSchema } from "@shared/schema";
-import { MongoClient, Db, Collection, ObjectId } from "mongodb";
+import { type Review, type InsertReview } from "@shared/schema";
+import { MongoClient, Db, Collection } from "mongodb";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
@@ -15,11 +15,9 @@ async function initializeDb() {
   db = client.db();
   reviewsCollection = db.collection("reviews");
   
-  // Create index for sorting by date
   await reviewsCollection.createIndex({ date: -1 });
 }
 
-// Initialize database connection
 initializeDb().catch(console.error);
 
 export interface IStorage {
@@ -37,6 +35,7 @@ export class MongoStorage implements IStorage {
     return docs.map(doc => ({
       _id: doc._id.toString(),
       name: doc.name,
+      appName: doc.appName,
       rating: doc.rating,
       review: doc.review,
       date: doc.date,
@@ -54,6 +53,7 @@ export class MongoStorage implements IStorage {
     return {
       _id: newDoc!._id.toString(),
       name: newDoc!.name,
+      appName: newDoc!.appName,
       rating: newDoc!.rating,
       review: newDoc!.review,
       date: newDoc!.date,

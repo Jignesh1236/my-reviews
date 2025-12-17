@@ -1,23 +1,40 @@
 import StarRating from './StarRating';
 import { formatDistanceToNow } from 'date-fns';
+import { FaGithub } from 'react-icons/fa';
 
 interface ReviewCardProps {
   name: string;
+  appName: string;
   rating: number;
   review: string;
   date: Date;
 }
 
-export default function ReviewCard({ name, rating, review, date }: ReviewCardProps) {
+export default function ReviewCard({ name, appName, rating, review, date }: ReviewCardProps) {
+  const repoUrl = `https://github.com/Jignesh1236/${appName}`;
+  
   return (
     <div
       className="bg-background border border-border rounded-md p-4 transition-all hover-elevate"
       data-testid={`card-review-${name.toLowerCase().replace(/\s+/g, '-')}`}
     >
       <div className="flex justify-between items-start flex-wrap gap-3 mb-3">
-        <h3 className="text-base font-semibold text-primary" data-testid="text-reviewer-name">
-          {name}
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-semibold text-primary" data-testid="text-reviewer-name">
+            {name}
+          </h3>
+          <span className="text-muted-foreground">reviewed</span>
+          <a 
+            href={repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
+            data-testid="link-repo"
+          >
+            <FaGithub className="text-lg" />
+            <span>{appName}</span>
+          </a>
+        </div>
         <div className="flex items-center gap-2">
           <StarRating value={rating} readonly size="sm" />
           <span className="text-xs font-semibold text-muted-foreground" data-testid="text-rating">

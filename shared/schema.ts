@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const insertReviewSchema = z.object({
   name: z.string().min(1, "Name is required"),
+  appName: z.string().min(1, "App name is required"),
   rating: z.number().min(1).max(5),
   review: z.string().min(1, "Review is required"),
 });
